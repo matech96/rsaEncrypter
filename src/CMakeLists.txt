@@ -1,5 +1,5 @@
 
-set(SOURCE_FILES main.cpp BigInt.h)
+set(SOURCE_FILES main.cpp BigInt.h Prime.cpp Prime.h)
 
 #add_library(core ${core_SRCS})
 #add_executable(exe main.cpp)

@@ -5,13 +5,17 @@
 #ifndef SSHENCRYPTER_BIGINT_H
 #define SSHENCRYPTER_BIGINT_H
 
-#include <array>
+#include <vector>
 #include <ostream>
+#include <array>
 
-using digit_t = uint32_t;
+using namespace std;
 
 template<int S>
 class BigInt {
+public:
+    using digit_t = uint32_t;
+protected:
     using mulipl_t = uint64_t;
     const static int multCarryShift = 32;
 
@@ -21,10 +25,17 @@ public:
 
     BigInt(const std::array<digit_t, S> &digits) : digits(digits) {}
 
+    BigInt(const std::vector<digit_t> &digits) {
+        for (int i = static_cast<int>(digits.size())-1; i >= 0 ; --i) {
+            this->digits[i] = digits[i];
+        }
+    }
+
     //region Operators
 
     BigInt<S> & operator=(const BigInt<S> &o) {
         digits = o.digits;
+        return *this;
     }
 
     bool operator!=(const BigInt &rhs) const {

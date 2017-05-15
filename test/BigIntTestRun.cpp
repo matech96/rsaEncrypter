@@ -5,6 +5,8 @@
 #include <gtest/gtest.h>
 #include "../src/BigInt.h"
 
+using digit_t = BigInt<0>::digit_t;
+
 template <int S>
 struct BigIntTestRun : testing::Test {
     BigInt<S> a = BigInt<S>(std::array<digit_t , S> {1,2});
@@ -35,8 +37,15 @@ struct TwoSidedOperationBigIntTestData{
     BigInt<S> res;
 
     TwoSidedOperationBigIntTestData(const std::array<digit_t , S> &a,
-                   const std::array<digit_t , S> &b,
-                   const std::array<digit_t , S> &res) {
+                                    const std::array<digit_t , S> &b,
+                                    const std::array<digit_t , S> &res) {
+        this->a = BigInt<S>(a);
+        this->b = BigInt<S>(b);
+        this->res = BigInt<S>(res);
+    }
+    TwoSidedOperationBigIntTestData(const std::vector<digit_t> &a,
+                                    const std::vector<digit_t> &b,
+                                    const std::vector<digit_t> &res) {
         this->a = BigInt<S>(a);
         this->b = BigInt<S>(b);
         this->res = BigInt<S>(res);
@@ -65,10 +74,12 @@ TEST_P(Addition, addition) {
 TEST_P(Multiplication, multiplication) {
     EXPECT_EQ(a*b, res);
 }
-//
+
 using arr2_t = std::array<digit_t, 2>;
+using vec_t = std::vector<digit_t>;
 INSTANTIATE_TEST_CASE_P(Default, Addition, testing::Values(
         TwoSidedOperationBigIntTestData<2>(arr2_t {1,2}, arr2_t {1,2}, arr2_t {2,4}),
+        TwoSidedOperationBigIntTestData<2>(vec_t {1,2}, vec_t {1,2}, vec_t {2,4}),
         TwoSidedOperationBigIntTestData<2>(arr2_t {0,1}, arr2_t {0, maxDigitValue}, arr2_t {1,0}),
         TwoSidedOperationBigIntTestData<2>(arr2_t {1256,3598}, arr2_t {25630, maxDigitValue}, arr2_t {26887,3597})
 ));
