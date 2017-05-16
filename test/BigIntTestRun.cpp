@@ -97,6 +97,22 @@ INSTANTIATE_TEST_CASE_P(Default, Addition, testing::Values(
 
 //endregion
 
+//region Addition
+
+struct Substraction : public Base4BigIntTestRun<2> {};
+TEST_P(Substraction, substraction) {
+    EXPECT_EQ(a-b, res);
+}
+using arr2_t = std::array<digit_t, 2>;
+using vec_t = std::vector<digit_t>;
+INSTANTIATE_TEST_CASE_P(Default, Substraction, testing::Values(
+        Base4BigIntTestData<2>(arr2_t {1, 2}, arr2_t {1, 2}, arr2_t {0, 0}),
+        Base4BigIntTestData<2>(vec_t {1,2}, vec_t {1,2}, vec_t {0,0}),
+        Base4BigIntTestData<2>(arr2_t {25630, maxDigitValue}, arr2_t {1256, 3598}, arr2_t {24374, 4294963697})
+));
+
+//endregion
+
 //region Multiplication
 
 struct Multiplication : public Base4BigIntTestRun<4> {};
@@ -108,6 +124,38 @@ INSTANTIATE_TEST_CASE_P(Default, Multiplication, testing::Values(
         Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 1, 4, 4}),
         Base4BigIntTestData<4>(arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 4294967294, 1})
 ));
+
+//endregion
+
+//region Multiplication
+
+struct Modulo : public Base4BigIntTestRun<4> {};
+TEST_P(Modulo, modulo) {
+    EXPECT_EQ(a%b, res);
+}
+using arr4_t = std::array<digit_t, 4>;
+INSTANTIATE_TEST_CASE_P(Default, Modulo, testing::Values(
+        Base4BigIntTestData<4>(arr4_t {0, 0, 1, 3}, arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 1}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 1, 0}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 0})
+));
+
+//endregion
+
+//region Shift
+
+template<int S>
+struct ModuloBITD{
+    BigInt<S> a;
+    int b;
+    BigInt<S> res;
+};
+TEST(Shift, shift) {
+    ModuloBITD<4> data[] = {{arr4_t {0, 0, maxDigitValue, maxDigitValue}, 5, arr4_t {0, 0, maxDigitValue>>5, maxDigitValue}},
+                         {arr4_t {0, 0, 13, 3}, 2, arr4_t {0, 0, 3,1073741824}}};
+    for(auto rec : data) {
+        EXPECT_EQ(rec.a >> rec.b, rec.res);
+    }
+}
 
 //endregion
 
