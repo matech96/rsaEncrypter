@@ -8,6 +8,7 @@
 #include <vector>
 #include <ostream>
 #include <array>
+#include <unordered_set>
 
 using namespace std;
 
@@ -44,6 +45,29 @@ public:
 
     bool operator==(const BigInt &rhs) const {
         return digits == rhs.digits;
+    }
+
+    bool operator<(const BigInt &rhs) const {
+        for (int i = 0; i < S; ++i) {
+            auto rd = rhs.digits[i];
+            auto td = this->digits[i];
+            if (td != rd) {
+                return td < rd;
+            }
+        }
+        return false;
+    }
+
+    bool operator>(const BigInt &rhs) const {
+        return rhs < *this;
+    }
+
+    bool operator<=(const BigInt &rhs) const {
+        return !(rhs < *this);
+    }
+
+    bool operator>=(const BigInt &rhs) const {
+        return !(*this < rhs);
     }
 
     template<int T>
