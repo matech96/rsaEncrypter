@@ -6,6 +6,9 @@
 #include "../src/BigInt.h"
 
 using digit_t = BigInt<0>::digit_t;
+using arr2_t = std::array<digit_t, 2>;
+using vec_t = std::vector<digit_t>;
+using arr4_t = std::array<digit_t, 4>;
 
 template <int S>
 struct BigIntTestRun : testing::Test {
@@ -86,8 +89,6 @@ struct Addition : public Base4BigIntTestRun<2> {};
 TEST_P(Addition, addition) {
     EXPECT_EQ(a+b, res);
 }
-using arr2_t = std::array<digit_t, 2>;
-using vec_t = std::vector<digit_t>;
 INSTANTIATE_TEST_CASE_P(Default, Addition, testing::Values(
         Base4BigIntTestData<2>(arr2_t {1, 2}, arr2_t {1, 2}, arr2_t {2, 4}),
         Base4BigIntTestData<2>(vec_t {1,2}, vec_t {1,2}, vec_t {2,4}),
@@ -97,7 +98,7 @@ INSTANTIATE_TEST_CASE_P(Default, Addition, testing::Values(
 
 //endregion
 
-//region Addition
+//region Substraction
 
 struct Substraction : public Base4BigIntTestRun<2> {};
 TEST_P(Substraction, substraction) {
@@ -107,8 +108,25 @@ using arr2_t = std::array<digit_t, 2>;
 using vec_t = std::vector<digit_t>;
 INSTANTIATE_TEST_CASE_P(Default, Substraction, testing::Values(
         Base4BigIntTestData<2>(arr2_t {1, 2}, arr2_t {1, 2}, arr2_t {0, 0}),
+        Base4BigIntTestData<2>(arr2_t {1, 2}, arr2_t {0, 0}, arr2_t {1, 2}),
+        Base4BigIntTestData<2>(arr2_t {0, 1}, arr2_t {0, 0}, arr2_t {0, 1}),
         Base4BigIntTestData<2>(vec_t {1,2}, vec_t {1,2}, vec_t {0,0}),
         Base4BigIntTestData<2>(arr2_t {25630, maxDigitValue}, arr2_t {1256, 3598}, arr2_t {24374, 4294963697})
+));
+
+//endregion
+
+//region Substraction4
+
+struct Substraction4 : public Base4BigIntTestRun<4> {};
+TEST_P(Substraction4, substraction4) {
+    EXPECT_EQ(a-b, res);
+}
+using arr2_t = std::array<digit_t, 2>;
+using vec_t = std::vector<digit_t>;
+INSTANTIATE_TEST_CASE_P(Default, Substraction4, testing::Values(
+        Base4BigIntTestData<4>(arr4_t {0,0,0, 1}, arr4_t {0,0,0, 0}, arr4_t {0,0,0, 1}),
+        Base4BigIntTestData<4>(arr4_t {0,0,25630, maxDigitValue}, arr4_t {0,0,1256, 3598}, arr4_t {0,0,24374, 4294963697})
 ));
 
 //endregion
@@ -119,15 +137,15 @@ struct Multiplication : public Base4BigIntTestRun<4> {};
 TEST_P(Multiplication, multiplication) {
     EXPECT_EQ(a*b, res);
 }
-using arr4_t = std::array<digit_t, 4>;
 INSTANTIATE_TEST_CASE_P(Default, Multiplication, testing::Values(
         Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 1, 4, 4}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 0}, arr4_t {0, 0, 0, 0}),
         Base4BigIntTestData<4>(arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 4294967294, 1})
 ));
 
 //endregion
 
-//region Multiplication
+//region Modulo
 
 struct Modulo : public Base4BigIntTestRun<4> {};
 TEST_P(Modulo, modulo) {
@@ -136,8 +154,10 @@ TEST_P(Modulo, modulo) {
 using arr4_t = std::array<digit_t, 4>;
 INSTANTIATE_TEST_CASE_P(Default, Modulo, testing::Values(
         Base4BigIntTestData<4>(arr4_t {0, 0, 1, 3}, arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 1}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 0, 1}, arr4_t {0, 0, 0, 1}, arr4_t {0, 0, 0, 0}),
         Base4BigIntTestData<4>(arr4_t {0, 0, 1, 0}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 0})
 ));
+
 
 //endregion
 
@@ -156,6 +176,24 @@ TEST(Shift, shift) {
         EXPECT_EQ(rec.a >> rec.b, rec.res);
     }
 }
+
+//endregion
+
+//region GreatesCommonDevider
+
+struct GreatesCommonDevider : public Base4BigIntTestRun<4> {};
+TEST_P(GreatesCommonDevider, greatesCommonDevider) {
+    EXPECT_EQ(a.greatesCommonDevider(b), res);
+}
+using arr4_t = std::array<digit_t, 4>;
+INSTANTIATE_TEST_CASE_P(Default, GreatesCommonDevider, testing::Values(
+        Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 1, 2}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 1, 0}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 2}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 13, 2}, arr4_t {0, 0, 131, 2}, arr4_t {0, 0, 0, 2}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 13, 2}, arr4_t {0, 0, 131, 1}, arr4_t {0, 0, 0, 3}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 13, 2}, arr4_t {0, 0, 11, 1}, arr4_t {0, 0, 0, 9}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 13, 2}, arr4_t {0, 0, 121, 1}, arr4_t {0, 0, 0, 1})
+));
 
 //endregion
 

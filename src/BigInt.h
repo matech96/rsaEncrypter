@@ -26,7 +26,7 @@ protected:
 public:
     BigInt() {}
 
-    BigInt(int a) {
+    BigInt<S>(int a) {
         digits[S - 1] = a;
     }
 
@@ -79,7 +79,7 @@ public:
     template<int T>
     BigInt<S> &operator+=(const BigInt<T> &o) {
         uint8_t overflow = performAddition(o);
-        handleOverflow<T>(overflow);
+        handleOverflow<T>(overflow, o);
         return *this;
     }
 
@@ -93,16 +93,16 @@ private:
             digit_t oi = o.digits[i];
             ti += oi;
             ti += carry;
-            carry = (uint8_t) ((ti < oi) ? 1 : 0);
+            carry = (uint8_t) ((ti < oi || ti < carry) ? 1 : 0);
         }
         return carry;
     }
 
     template<int T>
-    void handleOverflow(uint8_t carry) {
+    void handleOverflow(uint8_t carry, const BigInt &o) {
         if (carry) {
             if (S == T) {
-                throw std::overflow_error("Numbers are too big");
+                throw std::overflow_error("Addition: Too big numbers: " + (std::string)(*this)+ " + " + (std::string)(o));
             } else {
                 this->digits[T] += carry;
             }
@@ -122,8 +122,8 @@ public:
 
     BigInt &operator-=(const BigInt &o) {
         BigInt no = o;
-        no.negate();
         try {
+            no.negate();
             *this += no;
         } catch (std::overflow_error e) {}
         return *this;
@@ -162,7 +162,7 @@ public:
                 middleValues[j].digits[j - (S - 1 - i)] += static_cast<digit_t>(mi);
                 carry = static_cast<digit_t>(mi >> multCarryShift);
             }
-            if (carry) throw std::overflow_error("Too big numbers!");
+            if (carry) throw std::overflow_error("Multiplication: Too big numbers: " + (std::string)(*this)+ " * " + (std::string)(o));
         }
         BigInt<S> res;
         for (auto value : middleValues) {
@@ -172,10 +172,16 @@ public:
     }
 
     BigInt operator%(const BigInt &m) const {
+//        cout << "Modulo: " << *this << " % " << m << endl;
+
+        if(BigInt<S>(1) == m) return BigInt<S>(0);
+        if (*this < m) return *this;
+
         BigInt left = 0;
         BigInt right = (*this) >> 1;
         while (left < right) {
             BigInt k = (left + right) >> 1;
+//            cout << m << " - " << k << endl;
             if (*this - m >= m * k) {
                 left = k + BigInt<S>(1);
             } else {
@@ -183,6 +189,8 @@ public:
             }
         }
 
+
+//        cout << "modulo returns:" << *this << " - " << left * m << " = " << *this - left * m << endl;
         return *this - left * m;
     }
 
@@ -206,16 +214,17 @@ public:
         return res;
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const BigInt &anInt) {
+    operator std::string() const {
         const bool bitLike = false;
-        for (auto item : anInt.digits) {
-            if (bitLike) {
-                std::bitset<32> s(item);
-                os << s << " ";
-            } else {
-                os << item << " ";
-            }
+        std::string res = "";
+        for (auto item : this->digits) {
+            res += std::to_string(item)+ " ";
         }
+        return res;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const BigInt &anInt) {
+        os << static_cast<std::string>(anInt);
         return os;
     }
 
@@ -228,9 +237,16 @@ public:
         if (o < *this) {
             a = o;
             m = *this;
+        } else {
+            a = *this;
+            m = o;
         }
-
-
+        while ( a!= 0) {
+            BigInt<S> r = m % a;
+            m = a;
+            a = r;
+        }
+        return m;
     }
 
 };

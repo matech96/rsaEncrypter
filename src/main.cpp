@@ -14,6 +14,7 @@ int main() {
 //        std::cout << "positive"<< std::endl;
 //    }
 
-    cout << Prime::isPrime(BigInt<64>()) << endl;
+    cout << BigInt<1>(1) << endl;
     return 0;
+
 }
