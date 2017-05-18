@@ -12,8 +12,8 @@ using arr4_t = std::array<digit_t, 4>;
 
 template <int S>
 struct BigIntTestRun : testing::Test {
-    BigInt<S> a = BigInt<S>(std::array<digit_t , S> {1,2});
-    BigInt<S> b = BigInt<S>(std::array<digit_t, S> {2,4});
+    BigInt<S> a;
+    BigInt<S> b;
 
 };
 TEST(BigInt_NotParametarized, equaliti) {
@@ -140,7 +140,22 @@ TEST_P(Multiplication, multiplication) {
 INSTANTIATE_TEST_CASE_P(Default, Multiplication, testing::Values(
         Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 1, 4, 4}),
         Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 0}, arr4_t {0, 0, 0, 0}),
-        Base4BigIntTestData<4>(arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 4294967294, 1})
+        Base4BigIntTestData<4>(arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 0, maxDigitValue}, arr4_t {0, 0, 4294967294, 1}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 0, 127}, arr4_t {0, 0, 0, 233}, arr4_t {0, 0, 0, 29591}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 0, 233}, arr4_t {0, 0, 0, 127}, arr4_t {0, 0, 0, 29591})
+));
+
+//endregion
+
+//region Multiplication1
+
+struct Multiplication1 : public Base4BigIntTestRun<1> {};
+TEST_P(Multiplication1, multiplication1) {
+    EXPECT_EQ(a*b, res);
+}
+INSTANTIATE_TEST_CASE_P(Default, Multiplication1, testing::Values(
+        Base4BigIntTestData<1>(vec_t{127}, vec_t{233}, vec_t{29591}),
+        Base4BigIntTestData<1>(vec_t{233}, vec_t{127}, vec_t{29591})
 ));
 
 //endregion

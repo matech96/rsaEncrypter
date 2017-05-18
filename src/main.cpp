@@ -14,7 +14,8 @@ int main() {
 //        std::cout << "positive"<< std::endl;
 //    }
 
-    cout << BigInt<1>(1) << endl;
+    const BigInt<1> &anInt = BigInt<1>(511).greatesCommonDevider(BigInt<1>(233));
+    cout << anInt << endl;
     return 0;
 
 }

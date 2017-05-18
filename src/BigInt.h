@@ -155,7 +155,7 @@ public:
         for (int i = S - 1; i >= 0; --i) {
             mulipl_t oi = o.digits[i];
             carry = 0;
-            for (int j = T - 1; j > 0; --j) {
+            for (int j = T - 1; j >= 0; --j) {
                 mulipl_t ti = this->digits[j];
                 mulipl_t mi = ti * oi;
                 mi += carry;
@@ -181,7 +181,7 @@ public:
         BigInt right = (*this) >> 1;
         while (left < right) {
             BigInt k = (left + right) >> 1;
-//            cout << m << " - " << k << endl;
+//            cout << m << " - " << k << " - " << (*this - m) << " - " << (m * k) <<  endl;
             if (*this - m >= m * k) {
                 left = k + BigInt<S>(1);
             } else {
@@ -242,6 +242,7 @@ public:
             m = o;
         }
         while ( a!= 0) {
+//            cout << a << " - " << m << endl;
             BigInt<S> r = m % a;
             m = a;
             a = r;
