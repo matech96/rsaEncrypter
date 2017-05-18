@@ -257,3 +257,56 @@ INSTANTIATE_TEST_CASE_P(Default, GreaterThan, testing::Values(
 ));
 
 //endregion
+
+//region threeArgument struct
+
+template <int S>
+struct threeArgumentBigIntTestData : public TwoSidedOperationBigIntTestDataBase<S>{
+    BigInt<S> c;
+    BigInt<S> res;
+
+    threeArgumentBigIntTestData(const std::array<digit_t, S> &a,
+                                const std::array<digit_t, S> &b,
+                                const std::array<digit_t, S> &c,
+                                const std::array<digit_t, S> &res) : TwoSidedOperationBigIntTestDataBase<S>(a, b) {
+        this->c = c;
+        this->res = res;
+    }
+    threeArgumentBigIntTestData(const vec_t &a,
+                                const vec_t &b,
+                                const vec_t &c,
+                                const vec_t &res) : TwoSidedOperationBigIntTestDataBase<S>(a, b) {
+        this->c = c;
+        this->res = res;
+    }
+};
+
+template <int S>
+struct threeArgumentBigIntTestRun : public BigIntTestRun<S>, ::testing::WithParamInterface<threeArgumentBigIntTestData<S>> {
+    BigInt<S> c;
+    BigInt<S> res;
+public:
+    threeArgumentBigIntTestRun() {
+        const threeArgumentBigIntTestData<S> &values = ::testing::WithParamInterface<threeArgumentBigIntTestData<S>>::GetParam();
+        this->a = values.a;
+        this->b = values.b;
+        this->c = values.c;
+        this->res = values.res;
+    }
+};
+
+//endregion
+
+//region PowerModulo4
+
+struct PowerModulo4 : public threeArgumentBigIntTestRun<4> {};
+TEST_P(PowerModulo4, powerModulo4) {
+    EXPECT_EQ(a.powerModulo(b, c), res);
+}
+using arr4_t = std::array<digit_t, 4>;
+INSTANTIATE_TEST_CASE_P(Default, PowerModulo4, testing::Values(
+        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 0, 1}, arr4_t {0, 1, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 1}),
+        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 43, 2}, arr4_t {0, 0, 0, 123}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 0})
+));
+
+//endregion

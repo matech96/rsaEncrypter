@@ -102,7 +102,8 @@ private:
     void handleOverflow(uint8_t carry, const BigInt &o) {
         if (carry) {
             if (S == T) {
-                throw std::overflow_error("Addition: Too big numbers: " + (std::string)(*this)+ " + " + (std::string)(o));
+                throw std::overflow_error(
+                        "Addition: Too big numbers: " + (std::string) (*this) + " + " + (std::string) (o));
             } else {
                 this->digits[T] += carry;
             }
@@ -162,7 +163,9 @@ public:
                 middleValues[j].digits[j - (S - 1 - i)] += static_cast<digit_t>(mi);
                 carry = static_cast<digit_t>(mi >> multCarryShift);
             }
-            if (carry) throw std::overflow_error("Multiplication: Too big numbers: " + (std::string)(*this)+ " * " + (std::string)(o));
+            if (carry)
+                throw std::overflow_error(
+                        "Multiplication: Too big numbers: " + (std::string) (*this) + " * " + (std::string) (o));
         }
         BigInt<S> res;
         for (auto value : middleValues) {
@@ -174,7 +177,7 @@ public:
     BigInt operator%(const BigInt &m) const {
 //        cout << "Modulo: " << *this << " % " << m << endl;
 
-        if(BigInt<S>(1) == m) return BigInt<S>(0);
+        if (BigInt<S>(1) == m) return BigInt<S>(0);
         if (*this < m) return *this;
 
         BigInt left = 0;
@@ -218,7 +221,7 @@ public:
         const bool bitLike = false;
         std::string res = "";
         for (auto item : this->digits) {
-            res += std::to_string(item)+ " ";
+            res += std::to_string(item) + " ";
         }
         return res;
     }
@@ -241,7 +244,7 @@ public:
             a = *this;
             m = o;
         }
-        while ( a!= 0) {
+        while (a != 0) {
 //            cout << a << " - " << m << endl;
             BigInt<S> r = m % a;
             m = a;
@@ -250,6 +253,26 @@ public:
         return m;
     }
 
+    BigInt<S> powerModulo(BigInt<S> b, const BigInt<S> &m) const {
+        BigInt<S> a = *this;
+        a = a % m;
+        BigInt<S> c(1);
+        while(true) {
+            if (b.isOdd()) {
+                c = (c * a) % m;
+            }
+            b = b >> 2;
+            if (b == 0) {
+                return c;
+            }
+            a = (a * a) % m;
+        }
+    }
+
+
+    bool isOdd() const {
+        return (this->digits[S - 1] & 1);
+    }
 };
 
 
