@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <bitset>
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 
@@ -36,6 +37,16 @@ public:
         for (int i = static_cast<int>(digits.size()) - 1; i >= 0; --i) {
             this->digits[i] = digits[i];
         }
+    }
+
+    BigInt<S> &fillRandom(BigInt<S> max) {
+
+        size_t rand_long = 15;
+        for (int i = 0; i < S * multCarryShift + 1; i+=rand_long) {
+            *this += BigInt<S>(rand());
+            *this <<= rand_long;
+        }
+        return (*this) %= max;
     }
 
     //region Operators
@@ -175,9 +186,18 @@ public:
     }
 
     BigInt operator%(const BigInt &m) const {
+        BigInt<S> res(*this);
+        res %= m;
+        return res;
+    }
+
+    BigInt &operator%=(const BigInt &m) {
 //        cout << "Modulo: " << *this << " % " << m << endl;
 
-        if (BigInt<S>(1) == m) return BigInt<S>(0);
+        if (BigInt<S>(1) == m) {
+            digits = std::array<digit_t, S>();
+            return *this;
+        }
         if (*this < m) return *this;
 
         BigInt left = 0;
@@ -194,19 +214,27 @@ public:
 
 
 //        cout << "modulo returns:" << *this << " - " << left * m << " = " << *this - left * m << endl;
-        return *this - left * m;
+        return *this -= left * m;
     }
 
     BigInt operator>>(int n) const {
-        BigInt<S> res;
+        BigInt<S> res(*this);
+        res >>= n;
+        return res;
+    }
+
+    BigInt<S> &operator>>=(int n) {
+        if (n > multCarryShift)
+            throw std::length_error("n muss be smaller as multCarryShift = " + std::to_string(multCarryShift));
+
         digit_t carry = 0;
         size_t n_non_carry_bits = sizeof(digit_t) * 8 - n;
         digit_t carry_mask = (~digit_t(0)) >> n_non_carry_bits;
         for (int i = 0; i < S; ++i) {
             digit_t carry_old = carry;
 
-            res.digits[i] = digits[i];
-            digit_t &rd = res.digits[i];
+            this->digits[i] = digits[i];
+            digit_t &rd = this->digits[i];
 
             carry = rd & carry_mask;
             carry <<= n_non_carry_bits;
@@ -214,7 +242,43 @@ public:
             rd >>= n;
             rd += carry_old;
         }
+        return *this;
+    }
+
+    BigInt operator<<(int n) const {
+        BigInt<S> res(*this);
+        res <<= n;
         return res;
+    }
+
+    BigInt<S> &operator<<=(int n) {
+        if (n > multCarryShift)
+            throw std::length_error("n muss be smaller as multCarryShift = " + std::to_string(multCarryShift));
+
+        digit_t carry = 0;
+        size_t n_non_carry_bits = sizeof(digit_t) * 8 - n;
+        digit_t carry_mask = (~digit_t(0)) << n_non_carry_bits;
+        for (int i = S - 1; i >= 0; --i) {
+            digit_t carry_old = carry;
+
+            this->digits[i] = digits[i];
+            digit_t &rd = this->digits[i];
+
+            carry = rd & carry_mask;
+            carry >>= n_non_carry_bits;
+
+            rd <<= n;
+            rd += carry_old;
+
+//            std::cout << *this << " c " << carry << endl;
+        }
+        return *this;
+    }
+
+    BigInt<S> &operator++() {
+        BigInt<S> one = 1;
+        *this += one;
+        return *this;
     }
 
     operator std::string() const {
@@ -257,7 +321,7 @@ public:
         BigInt<S> a = *this;
         a = a % m;
         BigInt<S> c(1);
-        while(true) {
+        while (true) {
             if (b.isOdd()) {
                 c = (c * a) % m;
             }
@@ -269,9 +333,21 @@ public:
         }
     }
 
-
     bool isOdd() const {
-        return (this->digits[S - 1] & 1);
+        return (this->digits[S - 1] & digit_t(1));
+    }
+
+    bool isPrime() {
+        if (!(this->isOdd()) || *this == 1) return false;
+
+        BigInt<S> k = 1;
+        BigInt<S> t = 0;
+        BigInt<S> c = *this - 1;
+        while (c.isOdd()) {
+            c >>= 1;
+            ++t;
+        }
+
     }
 };
 

@@ -14,7 +14,10 @@ int main() {
 //        std::cout << "positive"<< std::endl;
 //    }
 
-    cout << 15129% 511 << endl;
+    srand(time(nullptr));
+    for (int i = 0; i < 15; ++i) {
+        cout << BigInt<5>().fillRandom(BigInt<5>(std::array<BigInt<5>::digit_t, 5>{500, 2, 3, 4, 5})) << endl;
+    }
     return 0;
 
 }

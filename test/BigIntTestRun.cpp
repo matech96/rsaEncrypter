@@ -34,6 +34,18 @@ TEST(BigInt_NotParametarized, addition_overflow) {
 }
 
 template <int S>
+struct PrimeData {
+    BigInt<S> a;
+    bool res;
+};
+TEST(Prime_T, isPrime) {
+    PrimeData<2> data[] = {PrimeData<2> {BigInt<2> {arr2_t {1,2}}, false}};
+    for (PrimeData<2> item : data) {
+        EXPECT_EQ(item.a.isPrime(), item.res);
+    }
+}
+
+template <int S>
 struct TwoSidedOperationBigIntTestDataBase{
     BigInt<S> a;
     BigInt<S> b;
@@ -184,11 +196,19 @@ struct ModuloBITD{
     int b;
     BigInt<S> res;
 };
-TEST(Shift, shift) {
+TEST(Shift, shiftRight) {
     ModuloBITD<4> data[] = {{arr4_t {0, 0, maxDigitValue, maxDigitValue}, 5, arr4_t {0, 0, maxDigitValue>>5, maxDigitValue}},
-                         {arr4_t {0, 0, 13, 3}, 2, arr4_t {0, 0, 3,1073741824}}};
+                            {arr4_t {0, 0, 13, 3}, 2, arr4_t {0, 0, 3,1073741824}}};
     for(auto rec : data) {
         EXPECT_EQ(rec.a >> rec.b, rec.res);
+    }
+}
+TEST(Shift, shiftLeft) {
+    ModuloBITD<4> data[] = {{arr4_t {0, 0, maxDigitValue, maxDigitValue}, 5, arr4_t {0, 31, maxDigitValue, maxDigitValue<<5}},
+                            {arr4_t {0, maxDigitValue, maxDigitValue, maxDigitValue}, 5, arr4_t {31, maxDigitValue, maxDigitValue, maxDigitValue<<5}},
+                            {arr4_t {0, 0, 13, 3}, 2, arr4_t {0, 0, 13*4,3*4}}};
+    for(auto rec : data) {
+        EXPECT_EQ(rec.a << rec.b, rec.res);
     }
 }
 
