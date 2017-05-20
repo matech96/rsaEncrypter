@@ -351,7 +351,8 @@ public:
         int n_trys = 300;
         for (int i = 0; i < n_trys; ++i) {
             BigInt<S> a;
-            a.fillRandom(*this - 1);
+            a.fillRandom(*this - 2);
+            ++a;
 //            cout << "Random number: " << a << endl;
             if (a.greatesCommonDevider(*this) != 1) {
 //                cout << "cd found:" << a.greatesCommonDevider(*this) << endl;

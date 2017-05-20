@@ -38,18 +38,22 @@ struct PrimeData {
     BigInt<S> a;
     bool res;
 };
-TEST(Prime_T, isPrime) {
-    PrimeData<4> data[] = {
-            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,383}}, true},
-            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7919}}, true},
-            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7917}}, false},
-            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,979126927}}, true},
-            PrimeData<4> {BigInt<4> {arr4_t {0,0,1,4}}, false}
-    };
-    for (PrimeData<4> item : data) {
-        EXPECT_EQ(item.a.isPrime(), item.res);
-    }
+
+struct PrimeTestRun : public ::testing::TestWithParam<PrimeData<4>>{
+
+};
+TEST_P(PrimeTestRun, isPrime) {
+    const PrimeData<4> &values = GetParam();
+    EXPECT_EQ(values.a.isPrime(), values.res);
 }
+INSTANTIATE_TEST_CASE_P(Default, PrimeTestRun, testing::Values(
+        PrimeData<4> {BigInt<4> {arr4_t {0,0,0,383}}, true},
+        PrimeData<4> {BigInt<4> {arr4_t {0,0,0,389}}, true},
+        PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7919}}, true},
+        PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7917}}, false},
+        PrimeData<4> {BigInt<4> {arr4_t {0,0,0,979126927}}, true},
+        PrimeData<4> {BigInt<4> {arr4_t {0,0,1,4}}, false}
+));
 
 template <int S>
 struct TwoSidedOperationBigIntTestDataBase{
