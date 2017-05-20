@@ -40,6 +40,7 @@ struct PrimeData {
 };
 TEST(Prime_T, isPrime) {
     PrimeData<4> data[] = {
+            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,383}}, true},
             PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7919}}, true},
             PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7917}}, false},
             PrimeData<4> {BigInt<4> {arr4_t {0,0,0,979126927}}, true},

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "BigInt.h"
 #include "Prime.h"
+#include "RSAEncrypter.h"
 
 extern template class BigInt<2>;
 
@@ -16,7 +17,7 @@ int main() {
 
     srand(time(nullptr));
     for (int i = 0; i < 15; ++i) {
-        cout << BigInt<5>().fillRandom(BigInt<5>(std::array<BigInt<5>::digit_t, 5>{500, 2, 3, 4, 5})) << endl;
+        cout << RSAEncrypter().N << endl;
     }
     return 0;
 

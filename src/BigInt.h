@@ -298,7 +298,8 @@ public:
     //endregion
 
     BigInt<S> greatesCommonDevider(const BigInt<S> &o) const {
-        //TODO
+        if(*this == 0 || o == 0) return 1;
+
         BigInt<S> a;
         BigInt<S> m;
         if (o < *this) {
@@ -351,8 +352,9 @@ public:
         for (int i = 0; i < n_trys; ++i) {
             BigInt<S> a;
             a.fillRandom(*this - 1);
+//            cout << "Random number: " << a << endl;
             if (a.greatesCommonDevider(*this) != 1) {
-//                cout << "cd fount:" << a.greatesCommonDevider(*this) << endl;
+//                cout << "cd found:" << a.greatesCommonDevider(*this) << endl;
                 return false;
             }
             BigInt<S> ac = a.powerModulo(c, *this);
