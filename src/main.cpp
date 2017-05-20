@@ -16,9 +16,11 @@ int main() {
 //    }
 
     srand(time(nullptr));
-    for (int i = 0; i < 15; ++i) {
-        cout << RSAEncrypter().N << endl;
-    }
+    const RSAEncrypter &encrypter = RSAEncrypter();
+    cout << encrypter.N << endl;
+    cout << encrypter.p << endl;
+    cout << encrypter.q << endl;
+    cout << encrypter.c << endl;
     return 0;
 
 }

@@ -40,7 +40,6 @@ public:
     }
 
     BigInt<S> &fillRandom(BigInt<S> max) {
-
         size_t rand_long = 15;
         for (int i = 0; i < S * multCarryShift + 1 && *this < max; i += rand_long) {
             *this += BigInt<S>(rand());
