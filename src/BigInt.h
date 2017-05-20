@@ -42,7 +42,7 @@ public:
     BigInt<S> &fillRandom(BigInt<S> max) {
 
         size_t rand_long = 15;
-        for (int i = 0; i < S * multCarryShift + 1; i+=rand_long) {
+        for (int i = 0; i < S * multCarryShift + 1 && *this < max; i += rand_long) {
             *this += BigInt<S>(rand());
             *this <<= rand_long;
         }
@@ -319,13 +319,13 @@ public:
 
     BigInt<S> powerModulo(BigInt<S> b, const BigInt<S> &m) const {
         BigInt<S> a = *this;
-        a = a % m;
+        a %= m;
         BigInt<S> c(1);
         while (true) {
             if (b.isOdd()) {
                 c = (c * a) % m;
             }
-            b = b >> 2;
+            b = b >> 1;
             if (b == 0) {
                 return c;
             }
@@ -337,17 +337,42 @@ public:
         return (this->digits[S - 1] & digit_t(1));
     }
 
-    bool isPrime() {
+    bool isPrime() const {
         if (!(this->isOdd()) || *this == 1) return false;
 
-        BigInt<S> k = 1;
-        BigInt<S> t = 0;
+        int t = 0;
         BigInt<S> c = *this - 1;
-        while (c.isOdd()) {
+        while (!c.isOdd()) {
             c >>= 1;
             ++t;
         }
 
+        int n_trys = 300;
+        for (int i = 0; i < n_trys; ++i) {
+            BigInt<S> a;
+            a.fillRandom(*this - 1);
+            if (a.greatesCommonDevider(*this) != 1) {
+//                cout << "cd fount:" << a.greatesCommonDevider(*this) << endl;
+                return false;
+            }
+            BigInt<S> ac = a.powerModulo(c, *this);
+            if (ac != 1 && ac != *this - 1) {
+                bool exist_1 = false;
+                for (int j = 0; j < t; ++j) {
+                    ac = ac.powerModulo(2, *this);
+//                    std::cout << a << "ac:" << ac << std::endl;
+                    if (ac == *this - 1) {
+                        exist_1 = true;
+                        break;
+                    }
+                }
+
+                if (!exist_1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 };
 

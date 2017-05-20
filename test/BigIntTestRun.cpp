@@ -39,8 +39,13 @@ struct PrimeData {
     bool res;
 };
 TEST(Prime_T, isPrime) {
-    PrimeData<2> data[] = {PrimeData<2> {BigInt<2> {arr2_t {1,2}}, false}};
-    for (PrimeData<2> item : data) {
+    PrimeData<4> data[] = {
+            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7919}}, true},
+            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,7917}}, false},
+            PrimeData<4> {BigInt<4> {arr4_t {0,0,0,979126927}}, true},
+            PrimeData<4> {BigInt<4> {arr4_t {0,0,1,4}}, false}
+    };
+    for (PrimeData<4> item : data) {
         EXPECT_EQ(item.a.isPrime(), item.res);
     }
 }
@@ -326,7 +331,8 @@ TEST_P(PowerModulo4, powerModulo4) {
 using arr4_t = std::array<digit_t, 4>;
 INSTANTIATE_TEST_CASE_P(Default, PowerModulo4, testing::Values(
         threeArgumentBigIntTestData<4>(arr4_t {0, 0, 0, 1}, arr4_t {0, 1, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 1}),
-        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 43, 2}, arr4_t {0, 0, 0, 123}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 0})
+        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 43, 2}, arr4_t {0, 0, 0, 123}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 0}),
+        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 0, 574}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 7919}, arr4_t {0, 0, 0, 4797})
 ));
 
 //endregion
