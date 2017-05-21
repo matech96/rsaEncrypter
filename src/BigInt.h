@@ -15,6 +15,10 @@
 
 using namespace std;
 
+/**
+ * Stores an unsigned number, that has greater length as long long.
+ * @tparam S The size of the number is S*32.
+ */
 template<int S>
 class BigInt {
 public:
@@ -25,20 +29,41 @@ protected:
 
     std::array<digit_t, S> digits = std::array<digit_t, S>();
 public:
+    /**
+     * Default constructor. Value is 0.
+     */
     BigInt() {}
 
+    /**
+     * Copyies the value of the given int.
+     * @param a Value to copy.
+     */
     BigInt<S>(int a) {
         digits[S - 1] = a;
     }
 
+    /**
+     * The array will be processed az a coherent data. The first bit will be the MVB (most valuable bit).
+     * @param digits
+     */
     BigInt(const std::array<digit_t, S> &digits) : digits(digits) {}
 
+
+    /**
+     * The array will be processed az a coherent data. The first bit will be the MVB (most valuable bit).
+     * @param digits
+     */
     BigInt(const std::vector<digit_t> &digits) {
         for (int i = static_cast<int>(digits.size()) - 1; i >= 0; --i) {
             this->digits[i] = digits[i];
         }
     }
 
+    /**
+     * Fills with random number that is smaller as max.
+     * @param max
+     * @return Reference to this object.
+     */
     BigInt<S> &fillRandom(BigInt<S> max) {
         size_t rand_long = 15;
         for (int i = 0; i < S * multCarryShift + 1 && *this < max; i += rand_long) {
@@ -165,7 +190,6 @@ public:
 
     template<int T>
     BigInt<S> operator*(const BigInt<T> &o) const {
-//        cerr << "Multiply: " << *this << " / " << o << endl;
         BigInt<S> middleValues[T];
         digit_t carry = 0;
         for (int i = S - 1; i >= 0; --i) {
@@ -224,8 +248,6 @@ public:
     }
 
     BigInt &operator%=(const BigInt &m) {
-//        cerr << "Modulo: " << *this << " % " << m << endl;
-
         if (BigInt<S>(1) == m) {
             digits = std::array<digit_t, S>();
             return *this;
@@ -288,8 +310,6 @@ public:
 
             rd <<= n;
             rd += carry_old;
-
-//            std::cerr << *this << " c " << carry << endl;
         }
         return *this;
     }
@@ -316,8 +336,10 @@ public:
 
     //endregion
 
+    /**
+     * Gets the greatest common devider of this object and o.
+     */
     BigInt<S> greatesCommonDevider(const BigInt<S> &o) const {
-//        cerr << "greatest common devider: (" << *this << " , " << o << ")" << endl;
         if (*this == 0 || o == 0) return 1;
 
         BigInt<S> a;
@@ -329,8 +351,8 @@ public:
             a = *this;
             m = o;
         }
+
         while (a != 0) {
-//            cerr << a << " - " << m << endl;
             BigInt<S> r = m % a;
             m = a;
             a = r;
@@ -338,13 +360,16 @@ public:
         return m;
     }
 
+    /**
+     * Gets the this power b modulo m.
+     * @param b Exponent
+     * @param m Modulo value.
+     */
     BigInt<S> powerModulo(BigInt<S> b, const BigInt<S> &m) const {
-//        cerr << "Power modulo: " << *this << "^" << b << " mod " << m << endl;
         BigInt<S> a = *this;
         a %= m;
         BigInt<S> c(1);
         while (true) {
-//            cerr << "a: " << a << "b: " << b << "c: " << c << endl;
             if (b.isOdd()) {
                 c = (c * a) % m;
             }
@@ -375,9 +400,7 @@ public:
             BigInt<S> a;
             a.fillRandom(*this - 2);
             ++a;
-//            cerr << "Random number: " << a << endl;
             if (a.greatesCommonDevider(*this) != 1) {
-//                cerr << "cd found:" << a.greatesCommonDevider(*this) << endl;
                 return false;
             }
             BigInt<S> ac = a.powerModulo(c, *this);
@@ -385,7 +408,6 @@ public:
                 bool exist_1 = false;
                 for (int j = 0; j < t; ++j) {
                     ac = ac.powerModulo(2, *this);
-//                    std::cerr << a << "ac:" << ac << std::endl;
                     if (ac == *this - 1) {
                         exist_1 = true;
                         break;
