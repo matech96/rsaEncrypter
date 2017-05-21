@@ -8,7 +8,7 @@ num_t RSAEncrypter::generatePrime(const num_t &max) {
     num_t pr = num_t().fillRandom(max);
     do {
         ++pr;
-        cout << "Generated num = " << pr << endl;
+//        cerr << "Generated num = " << pr << endl;
     } while (!pr.isPrime());
     return pr;
 }
@@ -25,23 +25,25 @@ RSAEncrypter::RSAEncrypter() {
     p = generatePrime(max);
     q = generatePrime(max);
     N = p * q;
-    generatePublicKey();
     clock_t end = clock();
-    cout << "Ellaspes time : " << (end-begin) << endl;
+    cerr << "p= " << p << endl;
+    cerr << "q= " << q << endl;
+    cerr << "Ellaspes time : " << (end-begin) << endl;
+    generatePublicKey();
     begin = clock();
     generatePrivateKey();
     end = clock();
-    cout << c << endl;
-    cout << "Private key ellaspes time : " << (end-begin) << endl;
+    cerr << c << endl;
+    cerr << "Private key ellaspes time : " << (end-begin) << endl;
 }
 
 num_t RSAEncrypter::generatePublicKey() {
-    cout << "Generating public key" << endl;
+    cerr << "Generating public key" << endl;
     num_t fiN = (p - 1) * (q - 1);
-    c = num_t().fillRandom(fiN);
+    c = num_t().fillRandom(fiN>>2);
     do {
         ++c;
-        cout << "Generated num = " << c << endl;
+        cerr << "Public key candidate= " << c << endl;
     } while (c.greatesCommonDevider(fiN) != 1);
 }
 
@@ -50,7 +52,7 @@ num_t RSAEncrypter::encrypt(const num_t &mess) {
 }
 
 num_t RSAEncrypter::generatePrivateKey() {
-    cout << "Generating private key" << endl;
+    cerr << "Generating private key" << endl;
     num_t a = c;
     num_t b = 1;
     num_t m = N;
@@ -58,15 +60,23 @@ num_t RSAEncrypter::generatePrivateKey() {
     num_t M = N;
     num_t s = 0;
     while (true) {
+        cerr << "m: " << m << "a: " << a << "b: " << b << endl;
         num_t t = m / a;
-        cout << t << endl;
+        cerr << "t: " << t << endl;
         num_t r = m % a;
-        cout << r << endl;
+        cerr << "r: " << r << endl;
         if (r == 0) {
             d = b / a;
             return d;
         }
-        num_t tmp = (s - t * b) % M;
+        while(true) {
+            try {
+                num_t tmp = (s - t * b) % M;
+                break;
+            } catch (std::overflow_error e) {
+                s+=M;
+            }
+        }
         m = a;
         a = r;
         s = b;

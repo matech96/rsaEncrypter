@@ -88,6 +88,7 @@ public:
 
     template<int T>
     BigInt<S> &operator+=(const BigInt<T> &o) {
+//        cerr << "Addition: " << *this << " / " << o << endl;
         uint8_t overflow = performAddition(o);
         handleOverflow<T>(overflow, o);
         return *this;
@@ -132,6 +133,7 @@ public:
 
 
     BigInt &operator-=(const BigInt &o) {
+        if (*this < o) throw std::overflow_error("Substraction: Second argument is greater than first! " + std::string(*this) + " - " + std::string(o));
         BigInt no = o;
         try {
             no.negate();
@@ -161,6 +163,7 @@ public:
 
     template<int T>
     BigInt<S> operator*(const BigInt<T> &o) const {
+//        cerr << "Multiply: " << *this << " / " << o << endl;
         BigInt<S> middleValues[T];
         digit_t carry = 0;
         for (int i = S - 1; i >= 0; --i) {
@@ -185,27 +188,24 @@ public:
     }
 
     BigInt<S> &operator/=(const BigInt<S> &d) {
-        cout << "Devise: " << *this << " / " << d << endl;
+//        cerr << "Devise: " << *this << " / " << d << endl;
 
         if (d == 1) return *this;
 
         BigInt left = 0;
         BigInt right = (*this) >> 1;
-        while (true) {
+        while (left < right) {
             BigInt k = (left + right) >> 1;
-            cout << left << " - " << right << " - " << k << " - " << d * k << endl;
+//            cerr << left << " - " << right << " - " << k << " - " << d * k << endl;
             const BigInt &one = BigInt<S>(1);
-            if (*this == d * k || (*this == d * (k + one)) && *this % d != 0) {
-                *this = k;
-                cout << "divisions returns:" << *this << endl;
-                return *this;
-            }
-            if (*this > d * k) {
+            if (*this - d >= d * k) {
                 left = k + one;
             } else {
                 right = k;
             }
         }
+        *this = left;
+        return *this;
     }
 
     BigInt operator/(const BigInt &d) const {
@@ -221,7 +221,7 @@ public:
     }
 
     BigInt &operator%=(const BigInt &m) {
-//        cout << "Modulo: " << *this << " % " << m << endl;
+//        cerr << "Modulo: " << *this << " % " << m << endl;
 
         if (BigInt<S>(1) == m) {
             digits = std::array<digit_t, S>();
@@ -229,21 +229,8 @@ public:
         }
         if (*this < m) return *this;
 
-        BigInt left = 0;
-        BigInt right = (*this) >> 1;
-        while (left < right) {
-            BigInt k = (left + right) >> 1;
-//            cout << m << " - " << k << " - " << (*this - m) << " - " << (m * k) <<  endl;
-            if (*this - m >= m * k) {
-                left = k + BigInt<S>(1);
-            } else {
-                right = k;
-            }
-        }
-
-
-//        cout << "modulo returns:" << *this << " - " << left * m << " = " << *this - left * m << endl;
-        return *this -= left * m;
+        BigInt k = *this/m;
+        return *this -= k * m;
     }
 
     BigInt operator>>(int n) const {
@@ -299,7 +286,7 @@ public:
             rd <<= n;
             rd += carry_old;
 
-//            std::cout << *this << " c " << carry << endl;
+//            std::cerr << *this << " c " << carry << endl;
         }
         return *this;
     }
@@ -327,6 +314,7 @@ public:
     //endregion
 
     BigInt<S> greatesCommonDevider(const BigInt<S> &o) const {
+//        cerr << "greatest common devider: (" << *this << " , " << o << ")" << endl;
         if (*this == 0 || o == 0) return 1;
 
         BigInt<S> a;
@@ -339,7 +327,7 @@ public:
             m = o;
         }
         while (a != 0) {
-//            cout << a << " - " << m << endl;
+//            cerr << a << " - " << m << endl;
             BigInt<S> r = m % a;
             m = a;
             a = r;
@@ -382,9 +370,9 @@ public:
             BigInt<S> a;
             a.fillRandom(*this - 2);
             ++a;
-//            cout << "Random number: " << a << endl;
+//            cerr << "Random number: " << a << endl;
             if (a.greatesCommonDevider(*this) != 1) {
-//                cout << "cd found:" << a.greatesCommonDevider(*this) << endl;
+//                cerr << "cd found:" << a.greatesCommonDevider(*this) << endl;
                 return false;
             }
             BigInt<S> ac = a.powerModulo(c, *this);
@@ -392,7 +380,7 @@ public:
                 bool exist_1 = false;
                 for (int j = 0; j < t; ++j) {
                     ac = ac.powerModulo(2, *this);
-//                    std::cout << a << "ac:" << ac << std::endl;
+//                    std::cerr << a << "ac:" << ac << std::endl;
                     if (ac == *this - 1) {
                         exist_1 = true;
                         break;
