@@ -299,7 +299,8 @@ TEST_P(GreaterThan, greater_than) {
 using arr4_t = std::array<digit_t, 4>;
 INSTANTIATE_TEST_CASE_P(Default, GreaterThan, testing::Values(
         CompareBigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 1, 2}, false),
-        CompareBigIntTestData<4>(arr4_t {0, 0, maxDigitValue, maxDigitValue}, arr4_t {0, 0, 0, maxDigitValue}, true)
+        CompareBigIntTestData<4>(arr4_t {0, 0, maxDigitValue, maxDigitValue}, arr4_t {0, 0, 0, maxDigitValue}, true),
+        CompareBigIntTestData<4>(arr4_t {0, 0, 237159523, 3802087970}, arr4_t {0, 0, 0, 71147857}, true)
 ));
 
 //endregion

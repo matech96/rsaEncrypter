@@ -88,7 +88,6 @@ public:
 
     template<int T>
     BigInt<S> &operator+=(const BigInt<T> &o) {
-//        cerr << "Addition: " << *this << " / " << o << endl;
         uint8_t overflow = performAddition(o);
         handleOverflow<T>(overflow, o);
         return *this;
@@ -133,7 +132,10 @@ public:
 
 
     BigInt &operator-=(const BigInt &o) {
-        if (*this < o) throw std::overflow_error("Substraction: Second argument is greater than first! " + std::string(*this) + " - " + std::string(o));
+        if (*this < o)
+            throw std::overflow_error(
+                    "Substraction: Second argument is greater than first! " + std::string(*this) + " - " +
+                    std::string(o));
         BigInt no = o;
         try {
             no.negate();
@@ -188,15 +190,16 @@ public:
     }
 
     BigInt<S> &operator/=(const BigInt<S> &d) {
-//        cerr << "Devise: " << *this << " / " << d << endl;
-
         if (d == 1) return *this;
+        if (*this < d) {
+            *this = 0;
+            return *this;
+        }
 
         BigInt left = 0;
         BigInt right = (*this) >> 1;
         while (left < right) {
             BigInt k = (left + right) >> 1;
-//            cerr << left << " - " << right << " - " << k << " - " << d * k << endl;
             const BigInt &one = BigInt<S>(1);
             if (*this - d >= d * k) {
                 left = k + one;
@@ -229,7 +232,7 @@ public:
         }
         if (*this < m) return *this;
 
-        BigInt k = *this/m;
+        BigInt k = *this / m;
         return *this -= k * m;
     }
 
