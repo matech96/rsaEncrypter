@@ -22,6 +22,8 @@ public:
 
     num_t generatePrime(const num_t &max);
     num_t generatePublicKey();
+    num_t generatePrivateKey();
+    num_t encrypt(const num_t &mess);
 };
 
 

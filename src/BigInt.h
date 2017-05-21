@@ -184,6 +184,36 @@ public:
         return res;
     }
 
+    BigInt<S> &operator/=(const BigInt<S> &d) {
+        cout << "Devise: " << *this << " / " << d << endl;
+
+        if (d == 1) return *this;
+
+        BigInt left = 0;
+        BigInt right = (*this) >> 1;
+        while (true) {
+            BigInt k = (left + right) >> 1;
+            cout << left << " - " << right << " - " << k << " - " << d * k << endl;
+            const BigInt &one = BigInt<S>(1);
+            if (*this == d * k || (*this == d * (k + one)) && *this % d != 0) {
+                *this = k;
+                cout << "divisions returns:" << *this << endl;
+                return *this;
+            }
+            if (*this > d * k) {
+                left = k + one;
+            } else {
+                right = k;
+            }
+        }
+    }
+
+    BigInt operator/(const BigInt &d) const {
+        BigInt<S> res(*this);
+        res /= d;
+        return res;
+    }
+
     BigInt operator%(const BigInt &m) const {
         BigInt<S> res(*this);
         res %= m;
@@ -297,7 +327,7 @@ public:
     //endregion
 
     BigInt<S> greatesCommonDevider(const BigInt<S> &o) const {
-        if(*this == 0 || o == 0) return 1;
+        if (*this == 0 || o == 0) return 1;
 
         BigInt<S> a;
         BigInt<S> m;

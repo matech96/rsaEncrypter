@@ -182,6 +182,20 @@ INSTANTIATE_TEST_CASE_P(Default, Multiplication1, testing::Values(
 
 //endregion
 
+//region Division
+
+struct Division : public Base4BigIntTestRun<4> {};
+TEST_P(Division, division) {
+    EXPECT_EQ(a/b, res);
+}
+INSTANTIATE_TEST_CASE_P(Default, Division, testing::Values(
+        Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 1}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 2147483649}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 0, 5661}, arr4_t {0, 0, 0, 3}, arr4_t {0, 0, 0, 1887}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 45, 0}, arr4_t {0, 0, 0, 2147483648}, arr4_t {0, 0, 0, 90}),
+        Base4BigIntTestData<4>(arr4_t {0, 0, 223938146, 1111588811}, arr4_t {0, 0, 94191513, 1113871049}, arr4_t {0, 0, 0, 2})
+));
+
 //region Modulo
 
 struct Modulo : public Base4BigIntTestRun<4> {};

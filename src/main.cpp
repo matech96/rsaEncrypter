@@ -21,6 +21,7 @@ int main() {
     cout << encrypter.p << endl;
     cout << encrypter.q << endl;
     cout << encrypter.c << endl;
+    cout << encrypter.d << endl;
     return 0;
 
 }
