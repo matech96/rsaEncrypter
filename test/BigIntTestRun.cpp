@@ -196,6 +196,8 @@ INSTANTIATE_TEST_CASE_P(Default, Division, testing::Values(
         Base4BigIntTestData<4>(arr4_t {0, 0, 223938146, 1111588811}, arr4_t {0, 0, 94191513, 1113871049}, arr4_t {0, 0, 0, 2})
 ));
 
+//endregion
+
 //region Modulo
 
 struct Modulo : public Base4BigIntTestRun<4> {};
@@ -351,7 +353,8 @@ using arr4_t = std::array<digit_t, 4>;
 INSTANTIATE_TEST_CASE_P(Default, PowerModulo4, testing::Values(
         threeArgumentBigIntTestData<4>(arr4_t {0, 0, 0, 1}, arr4_t {0, 1, 1, 2}, arr4_t {0, 0, 1, 2}, arr4_t {0, 0, 0, 1}),
         threeArgumentBigIntTestData<4>(arr4_t {0, 0, 43, 2}, arr4_t {0, 0, 0, 123}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 0}),
-        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 0, 574}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 7919}, arr4_t {0, 0, 0, 4797})
+        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 0, 574}, arr4_t {0, 0, 0, 2}, arr4_t {0, 0, 0, 7919}, arr4_t {0, 0, 0, 4797}),
+        threeArgumentBigIntTestData<4>(arr4_t {0, 0, 0, 97}, arr4_t {0, 0, 0, 29}, arr4_t {0, 0, 0, 60}, arr4_t {0, 0, 0, 37})
 ));
 
 //endregion

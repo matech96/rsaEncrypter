@@ -16,12 +16,15 @@ int main() {
 //    }
 
     srand(time(nullptr));
-    const RSAEncrypter &encrypter = RSAEncrypter();
-    cout << encrypter.N << endl;
-    cout << encrypter.p << endl;
-    cout << encrypter.q << endl;
-    cout << encrypter.c << endl;
-    cout << encrypter.d << endl;
+    RSAEncrypter encrypter = RSAEncrypter();
+    cerr << encrypter.generatePublicKey() << endl;
+    cerr << encrypter.generatePrivateKey() << endl;
+    int c[] = {2,3,4};
+    for(char i : c) {
+        num_t s = encrypter.encrypt(num_t(i));
+        s = encrypter.decrypt(s);
+        cerr << s << endl;
+    }
     return 0;
 
 }

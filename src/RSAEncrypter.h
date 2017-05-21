@@ -7,8 +7,8 @@
 
 #include "BigInt.h"
 
-const int num_length = 4;
-const int key_length = num_length/4;
+const int num_length = 8;
+const int key_length = num_length/8;
 using num_t = BigInt<num_length>;
 class RSAEncrypter {
 public:
@@ -23,7 +23,8 @@ public:
     num_t generatePrime(const num_t &max);
     num_t generatePublicKey();
     num_t generatePrivateKey();
-    num_t encrypt(const num_t &mess);
+    num_t encrypt(const num_t &mess) const;
+    num_t decrypt(const num_t &mess) const;
 };
 
 

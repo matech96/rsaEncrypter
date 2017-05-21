@@ -336,10 +336,12 @@ public:
     }
 
     BigInt<S> powerModulo(BigInt<S> b, const BigInt<S> &m) const {
+//        cerr << "Power modulo: " << *this << "^" << b << " mod " << m << endl;
         BigInt<S> a = *this;
         a %= m;
         BigInt<S> c(1);
         while (true) {
+//            cerr << "a: " << a << "b: " << b << "c: " << c << endl;
             if (b.isOdd()) {
                 c = (c * a) % m;
             }

@@ -40,14 +40,16 @@ RSAEncrypter::RSAEncrypter() {
 num_t RSAEncrypter::generatePublicKey() {
     cerr << "Generating public key" << endl;
     num_t fiN = (p - 1) * (q - 1);
-    c = num_t().fillRandom(fiN>>2);
+    c = num_t().fillRandom(fiN);
     do {
         ++c;
-        cerr << "Public key candidate= " << c << endl;
-    } while (c.greatesCommonDevider(fiN) != 1);
+//        cerr << "Public key candidate= " << c << endl;
+    } while (c.greatesCommonDevider(fiN) != 1 && c != 1);
+    return c;
 }
 
-num_t RSAEncrypter::encrypt(const num_t &mess) {
+num_t RSAEncrypter::encrypt(const num_t &mess) const {
+    cerr << "encrypt: " << mess << endl;
     return mess.powerModulo(c, N);
 }
 
@@ -55,31 +57,37 @@ num_t RSAEncrypter::generatePrivateKey() {
     cerr << "Generating private key" << endl;
     num_t a = c;
     num_t b = 1;
-    num_t m = N;
+    num_t m = (p - 1) * (q - 1);
 
-    num_t M = N;
+    num_t M = m;
     num_t s = 0;
     while (true) {
-        cerr << "m: " << m << "a: " << a << "b: " << b << endl;
+//        cerr << "m: " << m << "a: " << a << "b: " << b << endl;
         num_t t = m / a;
-        cerr << "t: " << t << endl;
+//        cerr << "t: " << t << endl;
         num_t r = m % a;
-        cerr << "r: " << r << endl;
+//        cerr << "r: " << r << endl;
         if (r == 0) {
             d = b / a;
             return d;
         }
-        while(true) {
+        num_t tmp;
+        while (true) {
             try {
-                num_t tmp = (s - t * b) % M;
+                tmp = (s - t * b) % M;
                 break;
             } catch (std::overflow_error e) {
-                s+=M;
+                s += M;
             }
         }
         m = a;
         a = r;
         s = b;
-        b = c;
+        b = tmp;
     }
+}
+
+num_t RSAEncrypter::decrypt(const num_t &mess) const {
+    cerr << "decrypt: " << mess << endl;
+    return mess.powerModulo(d, N);
 }
